@@ -61,19 +61,19 @@ export class DisplayProductsComponent implements OnInit {
                     let password: any = data?.sub;
                     let nickname: any = data?.nickname;
 
-                    const potentialNewUser = new User(
-                      email,
-                      nickname?.substring(0, nickname?.length / 2),
-                      nickname?.substring(
-                        nickname?.length / 2,
-                        nickname?.length
-                      ),
-                      password,
-                      'CUSTOMER',
-                      [],
-                      [],
-                      []
-                    );
+                    // const potentialNewUser = new User(
+                    //   email,
+                    //   nickname?.substring(0, nickname?.length / 2),
+                    //   nickname?.substring(
+                    //     nickname?.length / 2,
+                    //     nickname?.length
+                    //   ),
+                    //   password,
+                    //   'CUSTOMER',
+                    //   [],
+                    //   [],
+                    //   []
+                    // );
 
                     this.authentication.role = this.setUserRole(data["http://finally.com/roles"][0]);
                  
