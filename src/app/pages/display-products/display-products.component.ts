@@ -95,14 +95,14 @@ export class DisplayProductsComponent implements OnInit {
                           this.userService.registerUser(potentialNewUser).subscribe({
                             next: () => {
                               this.userService.findUserByEmail(email).subscribe({
-                                next:(value) => {
-                                  sessionStorage.setItem('userId', String(value.id));
+                                next:(value1) => {
+                                  sessionStorage.setItem('userId', String(value1.id));
                                   sessionStorage.setItem('user', JSON.stringify(new User(
-                                    value.email,
-                                    value.firstName,
-                                    value.lastName,
+                                    value1.email,
+                                    value1.firstName,
+                                    value1.lastName,
                                     '',
-                                    value.role,
+                                    value1.role,
                                     [],
                                     [],
                                     []
