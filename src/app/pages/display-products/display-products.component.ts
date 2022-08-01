@@ -55,11 +55,11 @@ export class DisplayProductsComponent implements OnInit {
               this.allProducts = products;
               this.auth.idTokenClaims$.subscribe({
                 next: (data) => {
-                  let dataInfo = data;
-                  if (dataInfo) {
-                    let email: any = dataInfo?.email;
-                    let password: any = dataInfo?.sub;
-                    let nickname: any = dataInfo?.nickname;
+                  
+                  if (data) {
+                    let email: any = data?.email;
+                    let password: any = data?.sub;
+                    let nickname: any = data?.nickname;
 
                     const potentialNewUser = new User(
                       email,
@@ -74,53 +74,11 @@ export class DisplayProductsComponent implements OnInit {
                       [],
                       []
                     );
-                    if (dataInfo["https://finally.com/roles"][0]) {
-                      this.authentication.role = dataInfo["https://finally.com/roles"][0].toUpperCase();
-                    } else {
-                      this.authentication.role = "CUSTOMER";
-                    }
 
-                    this.userService.findUserByEmail(email).subscribe({
-                      next: (value) => {
-                        sessionStorage.setItem('userId', String(value.id));
-                        sessionStorage.setItem('user', JSON.stringify(new User(
-                          value.email,
-                          value.firstName,
-                          value.lastName,
-                          '',
-                          value.role,
-                          [],
-                          [],
-                          []
-                        )));
-                      },
-                      error: (err) => {
-                        if (this.authentication.token && potentialNewUser.email === email) {
-                          this.userService.registerUser(potentialNewUser).subscribe({
-                            next: () => {
-                              this.userService.findUserByEmail(email).subscribe({
-                                next:(value) => {
-                                  sessionStorage.setItem('userId', String(value.id));
-                                  sessionStorage.setItem('user', JSON.stringify(new User(
-                                    value.email,
-                                    value.firstName,
-                                    value.lastName,
-                                    '',
-                                    value.role,
-                                    [],
-                                    [],
-                                    []
-                                  )));
-                                }})
-                            },
-                            error: (bruh)=>{
-                              console.log(bruh)
-                            }
-                          });
-                        }
-                        console.log(err)
-                      }
-                    })
+                    this.authentication.role = this.setUserRole(data["http://finally.com/roles"][0]);
+                 
+
+
                   }
                 }
               })
@@ -136,6 +94,7 @@ export class DisplayProductsComponent implements OnInit {
     })
 
   }
+  
 
   updateProductForm = new FormGroup({
     pname: new FormControl(''),
@@ -209,10 +168,15 @@ export class DisplayProductsComponent implements OnInit {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.router.onSameUrlNavigation = 'reload';
   }
+
+  setUserRole(data: any){
+    if (data) {
+      return data.toUpperCase();
+    } else {
+      return "CUSTOMER";
+    }
+
+  }
 }
-
-
-
-
 
 
