@@ -61,24 +61,62 @@ export class DisplayProductsComponent implements OnInit {
                     let password: any = data?.sub;
                     let nickname: any = data?.nickname;
 
-                    // const potentialNewUser = new User(
-                    //   email,
-                    //   nickname?.substring(0, nickname?.length / 2),
-                    //   nickname?.substring(
-                    //     nickname?.length / 2,
-                    //     nickname?.length
-                    //   ),
-                    //   password,
-                    //   'CUSTOMER',
-                    //   [],
-                    //   [],
-                    //   []
-                    // );
-
+                    const potentialNewUser = new User(
+                      email,
+                      nickname?.substring(0, nickname?.length / 2),
+                      nickname?.substring(
+                        nickname?.length / 2,
+                        nickname?.length
+                      ),
+                      password,
+                      'CUSTOMER',
+                      [],
+                      [],
+                      []
+                    );
                     this.authentication.role = this.setUserRole(data["http://finally.com/roles"][0]);
-                 
 
-
+                    this.userService.findUserByEmail(email).subscribe({
+                      next: (value) => {
+                        sessionStorage.setItem('userId', String(value.id));
+                        sessionStorage.setItem('user', JSON.stringify(new User(
+                          value.email,
+                          value.firstName,
+                          value.lastName,
+                          '',
+                          value.role,
+                          [],
+                          [],
+                          []
+                        )));
+                      },
+                      error: (err) => {
+                        if (this.authentication.token && potentialNewUser.email === email) {
+                          this.userService.registerUser(potentialNewUser).subscribe({
+                            next: () => {
+                              this.userService.findUserByEmail(email).subscribe({
+                                next:(value) => {
+                                  sessionStorage.setItem('userId', String(value.id));
+                                  sessionStorage.setItem('user', JSON.stringify(new User(
+                                    value.email,
+                                    value.firstName,
+                                    value.lastName,
+                                    '',
+                                    value.role,
+                                    [],
+                                    [],
+                                    []
+                                  )));
+                                }})
+                            },
+                            error: (bruh)=>{
+                              console.log(bruh)
+                            }
+                          });
+                        }
+                        console.log(err)
+                      }
+                    })
                   }
                 }
               })
@@ -94,7 +132,6 @@ export class DisplayProductsComponent implements OnInit {
     })
 
   }
-  
 
   updateProductForm = new FormGroup({
     pname: new FormControl(''),
@@ -168,7 +205,6 @@ export class DisplayProductsComponent implements OnInit {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.router.onSameUrlNavigation = 'reload';
   }
-
   setUserRole(data: any){
     if (data) {
       return data.toUpperCase();
@@ -178,5 +214,9 @@ export class DisplayProductsComponent implements OnInit {
 
   }
 }
+
+
+
+
 
 
